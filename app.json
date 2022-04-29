@@ -1,0 +1,11 @@
+{
+    "name": "Heroku SShhH",
+    "description": "we'll see",
+    "keywords": [
+        "rom",
+        "aosp"
+    ],
+    "version": "1.0.0",
+    "repository": "https://github.com/",
+    "stack": "container"
+}
