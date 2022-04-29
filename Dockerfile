@@ -13,14 +13,24 @@ RUN pacman-key --init
 RUN pacman-key --populate archlinux
 RUN pacman -Syu --noconfirm
 
-RUN pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
-RUN pacman-key --lsign-key FBA220DFC880C036
-RUN pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-RUN echo "[chaotic-aur]" >> /etc/pacman.conf
-RUN echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
+# RUN pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
+# RUN pacman-key --lsign-key FBA220DFC880C036
+# RUN pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+# RUN echo "[chaotic-aur]" >> /etc/pacman.conf
+# RUN echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
+# RUN pacman -Syu --noconfirm
+
+# RUN pacman -S aosp-devel
+
+RUN echo "[multilib]" >> /etc/pacman.conf
+RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 RUN pacman -Syu --noconfirm
 
-RUN pacman -S aosp-devel
+RUN git clone https://aur.archlinux.org/aosp-devel.git
+RUN cd aosp-devel
+RUN makepkg -si --noconfirm
+RUN cd ..
+RUN rm -rf aosp-devel
 
 
 ENV APP_HOME /app
