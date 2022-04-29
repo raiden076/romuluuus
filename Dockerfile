@@ -26,6 +26,8 @@ RUN echo "[multilib]" >> /etc/pacman.conf
 RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 RUN pacman -Syu --noconfirm
 
+RUN pacman -S git
+
 RUN git clone https://aur.archlinux.org/aosp-devel.git
 RUN cd aosp-devel
 RUN makepkg -si --noconfirm
