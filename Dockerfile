@@ -39,13 +39,13 @@ RUN echo "raiden ALL=(ALL:ALL) ALL" >> /etc/sudoers
 #INSTALLING PACKAGE
 USER raiden
 RUN cd /home/raiden
+RUN chown -R raiden $(pwd)
 RUN git clone https://aur.archlinux.org/aosp-devel.git
 RUN cd aosp-devel
 RUN makepkg -si --noconfirm
 RUN cd ..
 RUN git clone https://aur.archlinux.org/lineageos-devel.git los
 RUN cd lineageos-devel
-RUN sudo chown -R raiden $(pwd)
 RUN makepkg -si --noconfirm
 RUN cd ~
 USER root
