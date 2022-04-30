@@ -32,7 +32,7 @@ RUN pacman -S --needed --noconfirm sudo git
 RUN useradd -m heroku
 RUN passwd -d heroku
 RUN echo "heroku ALL=(ALL) ALL" >> /etc/sudoers
-RUN sudo su - heroku
+#RUN sudo su - heroku
 
 #INSTALLING PACKAGE
 RUN cd ~
@@ -42,7 +42,7 @@ RUN makepkg -si --noconfirm
 RUN cd ..
 RUN git clone https://aur.archlinux.org/lineageos-devel.git los
 RUN cd los
-RUN makepkg -si --noconfirm
+RUN sudo su - heroku && makepkg -si --noconfirm
 RUN cd ~
 
 
