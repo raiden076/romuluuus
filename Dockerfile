@@ -45,6 +45,7 @@ RUN makepkg -si --noconfirm
 RUN cd ..
 RUN git clone https://aur.archlinux.org/lineageos-devel.git los
 RUN cd lineageos-devel
+RUN sudo chown -R raiden $(pwd)
 RUN makepkg -si --noconfirm
 RUN cd ~
 USER root
