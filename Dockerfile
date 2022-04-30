@@ -26,14 +26,24 @@ RUN echo "[multilib]" >> /etc/pacman.conf
 RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 RUN pacman -Syu --noconfirm
 
-RUN pacman -S git --noconfirm
+RUN pacman -S --needed --noconfirm sudo git
 
+#SWITCH TO NONROOT USER
+RUN useradd -m heroku
+RUN passwd -d heroku
+RUN echo "heroku ALL=(ALL) ALL" >> /etc/sudoers
+RUN sudo -u heroku
 
-RUN git clone https://aur.archlinux.org/aosp-devel.git
-RUN cd aosp-devel
+#INSTALLING PACKAGE
+RUN cd ~
+RUN git clone https://aur.archlinux.org/aosp-devel.git aosp
+RUN cd aosp
 RUN makepkg -si --noconfirm
 RUN cd ..
-RUN rm -rf aosp-devel
+RUN git clone https://aur.archlinux.org/lineageos-devel.git los
+RUN cd los
+RUN makepkg -si --noconfirm
+RUN cd ~
 
 
 ENV APP_HOME /app
@@ -55,9 +65,8 @@ WORKDIR /opt/webapp
 
 ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en"
 
-RUN useradd -m heroku
-RUN usermod -d $APP_HOME heroku
-RUN chown heroku $APP_HOME
+RUN sudo usermod -d $APP_HOME heroku
+RUN sudo chown heroku $APP_HOME
 USER heroku
 
 ADD . $APP_HOME
