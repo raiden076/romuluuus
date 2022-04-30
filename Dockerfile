@@ -32,7 +32,7 @@ RUN pacman -S --needed --noconfirm sudo git
 RUN useradd -m heroku
 RUN passwd -d heroku
 RUN echo "heroku ALL=(ALL) ALL" >> /etc/sudoers
-RUN sudo -u heroku
+RUN sudo su - heroku
 
 #INSTALLING PACKAGE
 RUN cd ~
