@@ -29,24 +29,25 @@ RUN pacman -Syu --noconfirm
 RUN pacman -S --needed --noconfirm sudo git
 
 #SWITCH TO NONROOT USER
-RUN useradd -m heroku
-RUN mkdir -p /home/heroku
-RUN usermod -d /home/heroku heroku
-RUN passwd -d heroku
-RUN echo "heroku ALL=(ALL) ALL" >> /etc/sudoers
-#RUN sudo su - heroku
+RUN useradd -m raiden
+RUN APP_HOME /home/raiden
+
+RUN usermod -d /home/raiden -m raiden
+RUN passwd -d raiden
+RUN echo "raiden ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 #INSTALLING PACKAGE
-USER heroku
-RUN cd ~
-RUN git clone https://aur.archlinux.org/aosp-devel.git aosp
-RUN cd aosp
+USER raiden
+RUN cd /home/raiden
+RUN git clone https://aur.archlinux.org/aosp-devel.git
+RUN cd aosp-devel
 RUN makepkg -si --noconfirm
 RUN cd ..
 RUN git clone https://aur.archlinux.org/lineageos-devel.git los
-RUN cd los
-RUN sudo su - heroku && makepkg -si --noconfirm
+RUN cd lineageos-devel
+RUN makepkg -si --noconfirm
 RUN cd ~
+USER root
 
 
 ENV APP_HOME /app
@@ -68,9 +69,9 @@ WORKDIR /opt/webapp
 
 ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en"
 
-RUN sudo usermod -d $APP_HOME heroku
-RUN sudo chown heroku $APP_HOME
-USER heroku
+RUN usermod -d $APP_HOME raiden
+RUN chown raiden $APP_HOME
+USER raiden
 
 ADD . $APP_HOME
 
