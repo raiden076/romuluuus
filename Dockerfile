@@ -38,6 +38,7 @@ RUN echo "heroku ALL=(ALL) ALL" >> /etc/sudoers
 RUN cd ~
 RUN git clone https://aur.archlinux.org/aosp-devel.git aosp
 RUN cd aosp
+USER heroku
 RUN makepkg -si --noconfirm
 RUN cd ..
 RUN git clone https://aur.archlinux.org/lineageos-devel.git los
