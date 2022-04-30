@@ -30,7 +30,7 @@ RUN pacman -S --needed --noconfirm sudo git
 
 #SWITCH TO NONROOT USER
 RUN useradd -m raiden
-RUN APP_HOME /home/raiden
+ENV APP_HOME /home/raiden
 
 RUN usermod -d /home/raiden -m raiden
 RUN passwd -d raiden
