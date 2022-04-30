@@ -31,7 +31,7 @@ RUN pacman -S --needed --noconfirm sudo git
 #SWITCH TO NONROOT USER
 RUN useradd -m heroku
 RUN mkdir -p /home/heroku
-RUN usermod -d heroku
+RUN usermod -d /home/heroku heroku
 RUN passwd -d heroku
 RUN echo "heroku ALL=(ALL) ALL" >> /etc/sudoers
 #RUN sudo su - heroku
