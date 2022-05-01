@@ -28,7 +28,7 @@ RUN pacman-key --init && \
 
 # Create and switch to non-root user
 RUN useradd -m raiden && \
-    echo "raiden ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/raiden && \
+    echo "raiden ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/raiden
 USER raiden
 WORKDIR /home/build
 
