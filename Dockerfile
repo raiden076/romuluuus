@@ -1,5 +1,7 @@
 FROM archlinux:base-devel
 
+# Set up build env #1
+
 ENV \
     CCACHE_SIZE=50G \
     CCACHE_DIR=/srv/ccache \
@@ -7,74 +9,89 @@ ENV \
     CCACHE_COMPRESS=1 \
     PATH=$PATH:/usr/local/bin/
 
+# Set up bash
+
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN pacman-key --init
-RUN pacman-key --populate archlinux
-RUN pacman -Syu --noconfirm
 
-# RUN pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
-# RUN pacman-key --lsign-key FBA220DFC880C036
-# RUN pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-# RUN echo "[chaotic-aur]" >> /etc/pacman.conf
-# RUN echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
-# RUN pacman -Syu --noconfirm
+# Set up pacman
 
-# RUN pacman -S aosp-devel
 
-RUN echo "[multilib]" >> /etc/pacman.conf
-RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-RUN pacman -Syu --noconfirm
+RUN pacman-key --init && \
+    pacman-key --populate archlinux && \
+    pacman -Syu --noconfirm && \
+    echo "[multilib]" >> /etc/pacman.conf && \
+    echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf && \
+    pacman -Syu --noconfirm && \
+    pacman -S --needed --noconfirm git
 
-RUN pacman -S --needed --noconfirm sudo git
 
-#SWITCH TO NONROOT USER
-RUN useradd -m raiden
-ENV APP_HOME /home/raiden
-
-RUN usermod -d /home/raiden -m raiden
-RUN passwd -d raiden
-RUN echo "raiden ALL=(ALL:ALL) ALL" >> /etc/sudoers
-
-#INSTALLING PACKAGE
+# Create and switch to non-root user
+RUN useradd -m raiden && \
+    echo "raiden ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/raiden && \
 USER raiden
-RUN cd /home/raiden
-RUN chown -R raiden $(pwd)
-RUN git clone https://aur.archlinux.org/aosp-devel.git
-RUN cd aosp-devel
-RUN makepkg -si --noconfirm
-RUN cd ..
-RUN git clone https://aur.archlinux.org/lineageos-devel.git los
-RUN cd lineageos-devel
-RUN makepkg -si --noconfirm
-RUN cd ~
-USER root
+WORKDIR /home/build
 
+
+# Auto-fetch GPG keys and install Paru:
+RUN mkdir .gnupg && \
+    touch .gnupg/gpg.conf && \
+    echo "keyserver-options auto-key-retrieve" > .gnupg/gpg.conf && \
+    git clone https://aur.archlinux.org/paru-bin.git && \
+    cd paru-bin && \
+    makepkg --noconfirm --syncdeps --rmdeps --install --clean
+
+
+# Set up build env #2
+
+RUN paru -S lineageos-devel
+
+
+# # setup the webapp and a different user
+USER root
+WORKDIR /
 
 ENV APP_HOME /app
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
-RUN chmod 777 $APP_HOME
-
-
-RUN mkdir -p /opt/heroku
+RUN chmod 777 $APP_HOME && \
+    mkdir -p /opt/heroku && \
+    pacman -S --needed --noconfirm python python-pip
 
 ADD ./webapp/requirements.txt /tmp/requirements.txt
+
 RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
 
 ADD ./webapp /opt/webapp/
 WORKDIR /opt/webapp
 
+RUN useradd -m webapp && \
+    usermod -d $APP_HOME webapp && \
+    chown webapp $APP_HOME
 
-
-
-ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en"
-
-RUN usermod -d $APP_HOME raiden
-RUN chown raiden $APP_HOME
-USER raiden
+USER webapp
 
 ADD . $APP_HOME
+
+
+
+
+# ADD ./webapp/requirements.txt /tmp/requirements.txt
+# RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
+
+# ADD ./webapp /opt/webapp/
+# WORKDIR /opt/webapp
+
+
+
+
+# ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en"
+
+# RUN usermod -d $APP_HOME raiden
+# RUN chown raiden $APP_HOME
+# USER raiden
+
+# ADD . $APP_HOME
 
 ADD ./heroku-exec.sh /heroku-exec.sh
 # Run the app.  CMD is required to run on Heroku
