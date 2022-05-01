@@ -44,7 +44,7 @@ RUN mkdir .gnupg && \
 
 # Set up build env #2
 
-RUN paru -S lineageos-devel
+RUN paru -S --needed --noconfirm lineageos-devel
 
 
 # # setup the webapp and a different user
