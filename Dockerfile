@@ -44,7 +44,8 @@ RUN mkdir .gnupg && \
 
 # Set up build env #2
 
-RUN paru -S --needed --noconfirm lineageos-devel
+RUN pacman -S --needed --noconform curl git-lfs nmap android-tools android-udev vim nano rclone
+    paru -S --needed --noconfirm lineageos-devel ncurses5-compat-libs lib32-ncurses5-compat-libs xml2
 
 
 # # setup the webapp and a different user
@@ -58,6 +59,7 @@ RUN chmod 777 $APP_HOME && \
     mkdir -p /opt/heroku && \
     pacman -S --needed --noconfirm python python-pip
 
+RUN echo "alias tb=\'nc termbin.com 9999\'" >> /etc/bash.bashrc
 ADD ./webapp/requirements.txt /tmp/requirements.txt
 
 RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
