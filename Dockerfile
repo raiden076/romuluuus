@@ -28,9 +28,10 @@ RUN pacman-key --init && \
 
 # Create and switch to non-root user
 RUN useradd -m raiden && \
+    mkdir
     echo "raiden ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/raiden
 USER raiden
-WORKDIR /home/build
+WORKDIR /home/raiden
 
 
 # Auto-fetch GPG keys and install Paru:
