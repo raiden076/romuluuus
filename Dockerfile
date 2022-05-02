@@ -44,7 +44,7 @@ RUN mkdir .gnupg && \
 
 # Set up build env #2
 
-RUN pacman -S --needed --noconform curl git-lfs nmap android-tools android-udev vim nano rclone tmux tmate && \
+RUN pacman -S --needed --noconfirm curl git-lfs nmap android-tools android-udev vim nano rclone tmux tmate && \
     paru -S --needed --noconfirm lineageos-devel ncurses5-compat-libs lib32-ncurses5-compat-libs xml2
 
 
