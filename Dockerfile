@@ -59,7 +59,7 @@ RUN chmod 777 $APP_HOME && \
     mkdir -p /opt/heroku && \
     pacman -S --needed --noconfirm python python-pip
 
-RUN echo "alias tb=\'nc termbin.com 9999\'" >> /etc/bash.bashrc
+RUN echo "alias tb='nc termbin.com 9999'" >> /etc/bash.bashrc
 ADD ./webapp/requirements.txt /tmp/requirements.txt
 
 RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
