@@ -45,7 +45,7 @@ RUN mkdir .gnupg && \
 # Set up build env #2
 
 USER root
-RUN pacman -S --needed --noconfirm curl git-lfs nmap android-tools android-udev vim nano rclone tmux tmate openssh
+RUN pacman -S --needed --noconfirm curl git-lfs nmap android-tools android-udev vim nano rclone tmux tmate jre8-openjdk openssh
 USER raiden
 RUN paru -S --needed --noconfirm lineageos-devel ncurses5-compat-libs lib32-ncurses5-compat-libs xml2
 
